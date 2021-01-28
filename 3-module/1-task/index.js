@@ -4,8 +4,8 @@
  */
 function namify(users) {
     let usersNameArray = [];
-    for (let key of users) {
-      usersNameArray.push(key.name);
+    for (let user of users) {
+      usersNameArray.push(user.name);
     }
-  return usersNameArray;
+    return usersNameArray;
 }
