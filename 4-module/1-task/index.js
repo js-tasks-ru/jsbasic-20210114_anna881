@@ -3,6 +3,16 @@
  * @param {Object[]} friends
  * @return {HTMLUListElement}
  */
+
 function makeFriendsList(friends) {
-  // ваш код...
+	let fullNames = friends.map(friend => `${friend.firstName} ${friend.lastName}`);
+	let ul = document.createElement('ul');
+
+	for (let i = 0; i < fullNames.length; i++) {
+		let li = document.createElement('li');
+		let friendName = fullNames[i]
+		li.innerHTML = friendName;
+		ul.append(li);
+	}
+	return ul;
 }
