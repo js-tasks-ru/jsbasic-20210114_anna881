@@ -1,42 +1,39 @@
 function initCarousel() {
-  let carousel = document.querySelector('.carousel__inner');
-  let slides = carousel.querySelectorAll('.carousel__slide');
-  let slideWidth = slides[0].offsetWidth;
-  let currentSlidePosition = 0;
+	let carousel = document.querySelector('.carousel');
 
-  let rightButton = document.querySelector('.carousel__arrow_right');
-  let leftButton = document.querySelector('.carousel__arrow_left');
+	let slidesContainer = carousel.querySelector('.carousel__inner');
+	let slides = slidesContainer.querySelectorAll('.carousel__slide');
+	let slideWidth = slides[0].offsetWidth;
+	let currentSlidePosition = 0;
 
-  rightButton.style.display = '';
-  leftButton.style.display = 'none';
+	let leftButton = carousel.querySelector('.carousel__arrow_left');
+	leftButton.style.display = 'none';
+	let rightButton = carousel.querySelector('.carousel__arrow_right');
+	rightButton.style.display = '';
 
-  rightButton.addEventListener('click', transformRight);
-  leftButton.addEventListener('click', transformLeft);
-  rightButton.addEventListener('click', checkPosition);
-  leftButton.addEventListener('click', checkPosition);
 
-  function transformRight() {
-    currentSlidePosition -= slideWidth;
-    carousel.style.transform = 'translateX(' + currentSlidePosition + 'px)';
-  };
+	leftButton.addEventListener('click', moveLeft);
+	rightButton.addEventListener('click', moveRight);
 
-  function transformLeft() {
-    currentSlidePosition += slideWidth;
-    carousel.style.transform = 'translateX(' + currentSlidePosition + 'px)';
-  };
+	function moveLeft() {
+		transform(true);
+		checkPosition();
+	};
 
-  function checkPosition() {
-    if (currentSlidePosition == -slideWidth * (slides.length - 1)) {
-      rightButton.style.display = 'none';
-    } else {
-      rightButton.style.display = '';
+	function moveRight() {
+		transform(false);
+		checkPosition();
+	};
 
-    }
+	function transform(isToLeft) {
+		const positionOffset = isToLeft ? slideWidth : -slideWidth;
+		currentSlidePosition += positionOffset;
+		slidesContainer.style.transform = 'translateX(' + currentSlidePosition + 'px)';
+	}
 
-    if (currentSlidePosition < 0) {
-      leftButton.style.display = '';
-    } else {
-      leftButton.style.display = 'none';
-    }
-  }
+	function checkPosition() {
+		leftButton.style.display = currentSlidePosition >= 0 ? 'none' : '';
+		rightButton.style.display = currentSlidePosition == -slideWidth * (slides.length - 1)
+			? 'none' : '';
+	}
 }
