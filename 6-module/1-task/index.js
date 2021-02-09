@@ -14,6 +14,7 @@
  * @constructor
  */
 export default class UserTable {
+
 	constructor(users) {
 		let trs = users.map(function (user) {
 			// TODO: переделать Object.values на columns
@@ -27,6 +28,20 @@ export default class UserTable {
 
 		let table = document.createElement('table');
 		table.innerHTML = trs.join('');
+
+		addEventToButtons()
+
+		function addEventToButtons() {
+			let buttons = table.querySelectorAll('button');
+			for (let button of buttons) {
+				button.addEventListener('click', deleteRowHandler);
+			}
+		}
+
+		function deleteRowHandler(event) {
+			let trToDelete = event.target.closest('tr');
+			trToDelete.remove();
+		};
 
 		this.elem = table;
 	}
