@@ -14,6 +14,7 @@
  * @constructor
  */
 export default class UserTable {
+
 	constructor(users) {
 		let table = document.createElement('table');
 
@@ -22,21 +23,21 @@ export default class UserTable {
 		let headers = ['Имя', 'Возраст', 'Зарплата', 'Город', ''];
 		let headerTr = '<tr>' + headers.map(item => `<th>${item}</th>`).join('') + '</tr>';
 		thead.innerHTML = headerTr;
-		table.appendChild(thead);		
-		
+		table.appendChild(thead);
+
 		// тело таблицы
 		let tbody = document.createElement('tbody');
-		let trs = users.map(function (user) {
-			let userFieldValues = Object.values(user);
-			let tds = userFieldValues.map(x => `<td>${x}</td>`);
+		let trs = users.map(user => {
+			const fieldNames = ['name', 'age', 'salary', 'city'];
+			let tds = fieldNames.map(fieldName => `<td>${user[fieldName]}</td>`);
 			tds.push('<td><button>X</button></td>');
 			let tr = `<tr>${tds.join('')}</tr>`;
 			return tr;
 		});
-		
+
 		tbody.innerHTML = trs.join('');
 		table.appendChild(tbody);
-		
+
 		// вешаем хендлеры на кнопки "удалить"
 		function deleteRowHandler(event) {
 			let trToDelete = event.target.closest('tr');
