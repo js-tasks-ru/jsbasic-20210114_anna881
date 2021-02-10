@@ -19,7 +19,18 @@ export default class ProductCard {
 		function getPriceStr(price) {
 			return '€' + price.toFixed(2);
 		}
+		
+		let productAddEvent = new CustomEvent("product-add", {
+			detail: product.id,
+			bubbles: true
+		})
+		
+		let button = div.querySelector('.card__button');
+		button.addEventListener('click', function(event) {			
+			button.dispatchEvent(productAddEvent);
+		});
 
 		this.elem = div;
 	}
 }
+
