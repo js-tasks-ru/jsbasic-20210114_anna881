@@ -1,4 +1,4 @@
-function initCarousel() {
+export default function initCarousel() {
 	let carousel = document.querySelector('.carousel');
 
 	let slidesContainer = carousel.querySelector('.carousel__inner');
