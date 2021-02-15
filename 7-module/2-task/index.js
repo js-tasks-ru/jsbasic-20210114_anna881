@@ -12,7 +12,7 @@ export default class Modal {
 						</button>
 
 						<h3 class="modal__title">
-						${this.title}
+							${this.title}
 						</h3>
 					</div>
 					<div class="modal__body">
