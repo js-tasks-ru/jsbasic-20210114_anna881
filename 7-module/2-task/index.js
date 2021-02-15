@@ -1,7 +1,12 @@
 import createElement from '../../assets/lib/create-element.js';
 
 export default class Modal {
+	constructor() {
+	}
+
 	open() {
+		const self = this;
+
 		const modalWindowHtml = `
 			<div class="modal">
 				<div class="modal__overlay"></div>
@@ -12,38 +17,44 @@ export default class Modal {
 						</button>
 
 						<h3 class="modal__title">
-							${this.title}
+							${self.title}
 						</h3>
 					</div>
 					<div class="modal__body">
-						${this.body.outerHTML}
+						${self.body}
 					</div>
 				</div>
 			</div>`;
+
 		document.body.innerHTML = modalWindowHtml;
 		document.body.classList.add('is-modal-open');
+		self.modal = document.body.querySelector('.modal');
 
 		const closeButton = document.body.querySelector('.modal__close');
-		closeButton.addEventListener('click', this.close);
-
+		closeButton.addEventListener('click', () => self.close());
 		document.body.addEventListener('keydown', (event) => {
 			if (event.code === 'Escape') {
-				this.close();
+				self.close();
 			}
 		});
 	}
 
 	close() {
-		let modal = document.body.querySelector('.modal');
-		modal.remove();
+		this.modal.remove();
 		document.body.classList.remove('is-modal-open');
 	};
 
 	setTitle(title) {
 		this.title = title;
+		if (this.modal) {
+			this.modal.querySelector('.modal__title').innerHTML = title;
+		}
 	};
-
+	
 	setBody(modalBody) {
-		this.body = modalBody;
+		this.body = modalBody.outerHTML;
+		if (this.modal) {
+			this.modal.querySelector('.modal__body').innerHTML = modalBody.outerHTML;
+		}
 	};
 }
