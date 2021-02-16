@@ -32,11 +32,16 @@ export default class Modal {
 
 		const closeButton = document.body.querySelector('.modal__close');
 		closeButton.addEventListener('click', () => self.close());
-		document.body.addEventListener('keydown', (event) => {
+		
+		self.closeByEscape = (event) => {
 			if (event.code === 'Escape') {
 				self.close();
 			}
-		});
+			
+			document.body.removeEventListener('keydown', self.closeByEscape);
+		}
+
+		document.body.addEventListener('keydown', self.closeByEscape);
 	}
 
 	close() {
@@ -46,14 +51,14 @@ export default class Modal {
 
 	setTitle(title) {
 		this.title = title;
-		if (this.modal) {
+		if (this.modal && this.modal.querySelector('.modal__title')) {
 			this.modal.querySelector('.modal__title').innerHTML = title;
 		}
 	};
 	
 	setBody(modalBody) {
 		this.body = modalBody.outerHTML;
-		if (this.modal) {
+		if (this.modal && this.modal.querySelector('.modal__body')) {
 			this.modal.querySelector('.modal__body').innerHTML = modalBody.outerHTML;
 		}
 	};

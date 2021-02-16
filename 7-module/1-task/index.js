@@ -78,8 +78,10 @@ export default class RibbonMenu {
 			if (target.className != 'ribbon__item') return; // не на класс тогда не интересует
 
 			// убрать подсветку у эдементов
-			ribbonInner.querySelectorAll('.ribbon__item')
-				.forEach(item => item.classList.remove('ribbon__item_active'));
+			let previousHighlightedItem = ribbonInner.querySelector('.ribbon__item_active');
+			if(previousHighlightedItem) {
+				previousHighlightedItem.classList.remove('ribbon__item_active');
+			}
 
 			target.classList.add('ribbon__item_active'); // подсветить новый item
 		}		
