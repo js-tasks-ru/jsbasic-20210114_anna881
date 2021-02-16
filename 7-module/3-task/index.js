@@ -25,8 +25,7 @@ export default class StepSlider {
 			</div>`;
 
 		slider.innerHTML = sliderThumbHTML;
-		this.sliderValue = this.elem.querySelector('.slider__value');
-		
+
 		this.elem.addEventListener('click', this.changeSliderValue);
 	}
 
@@ -43,18 +42,36 @@ export default class StepSlider {
 		this.sliderValueMax = this.steps-1;
 		this.sliderSegmentCount = this.steps-1;*/
 
-		let currentSliderValue = 2;//заглушка
+		// Определение сегмента в %
+		let offsetLeft = this.elem.offsetLeft;
+		let sliderWidth = this.elem.clientWidth; // px
+		let clickCoordsX = ((event.clientX-offsetLeft)*100)/sliderWidth;//%
+		let clickCoordsXRound = Math.round(clickCoordsX);
+		let stepSize = 100/(this.steps - 1);//%
+
+		//Изменение значения сладера
+		this.sliderValue = this.elem.querySelector('.slider__value');
+		let currentSliderValue = Math.round(clickCoordsXRound/stepSize);
 		this.sliderValue.innerHTML = currentSliderValue;
 
+		//Добавление класса на выбранный элемент
 		if (this.elem.querySelector('.slider__step-active')) {
 			this.elem.querySelector('.slider__step-active').
-				classList.remove('slider__step-active');}
+				classList.remove('slider__step-active');
+		}
 
-		let currentSlideStep = event.target;
-		currentSlideStep.classList.add('slider__step-active');
+		let spanCollection = this.elem.querySelectorAll('span');
+		let spanIndex = currentSliderValue+1;
+		spanCollection[spanIndex].classList.add('slider__step-active');
 
+		//Смещение ползунка (пока по клику мыши)	
+		let leftPercents = stepSize*currentSliderValue; // Заглушка. Значение в процентах от 0 до 100
+		console.log(leftPercents);
 		
-	
+		let thumb = this.elem.querySelector('.slider__thumb');
+		let progress = this.elem.querySelector('.slider__progress');
 
+		thumb.style.left = `${leftPercents}%`;
+		progress.style.width = `${leftPercents}%`;
 	}
 }
