@@ -27,6 +27,7 @@ export default class StepSlider {
 		slider.innerHTML = sliderThumbHTML;
 
 		this.elem.addEventListener('click', this.changeSliderValue);
+		this.elem.addEventListener('click', this.custumEvent);
 	}
 
 	getStepSpansStr() {
@@ -57,10 +58,19 @@ export default class StepSlider {
 		spanElements[spanIndex].classList.add('slider__step-active');
 
 		//Смещение ползунка
-		let leftPercents = stepSizePercent * this.value; 
+		let leftPercents = stepSizePercent * this.value;
 		let thumbElement = this.elem.querySelector('.slider__thumb');
 		thumbElement.style.left = `${leftPercents}%`;
 		let progressElement = this.elem.querySelector('.slider__progress');
 		progressElement.style.width = `${leftPercents}%`;
+	}
+
+	custumEvent = () => {
+		let slideChange = new CustomEvent('slider-change', {
+			detail: this.value,
+			bubbles: true
+		})
+
+		this.elem.dispatchEvent(slideChange);
 	}
 }
