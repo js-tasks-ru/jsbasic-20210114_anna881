@@ -32,16 +32,16 @@ export default class Modal {
 
 		const closeButton = document.body.querySelector('.modal__close');
 		closeButton.addEventListener('click', () => self.close());
-		
-		self.closeByEscape = (event) => {
-			if (event.code === 'Escape') {
-				self.close();
-			}
-			
-			document.body.removeEventListener('keydown', self.closeByEscape);
-		}
 
 		document.body.addEventListener('keydown', self.closeByEscape);
+	}
+
+	closeByEscape = (event) => {
+		if (event.code === 'Escape') {
+			this.close();
+		}
+		
+		document.body.removeEventListener('keydown', this.closeByEscape);
 	}
 
 	close() {
