@@ -64,7 +64,7 @@ export default class StepSlider {
 		let progressElement = this.elem.querySelector('.slider__progress');
 		progressElement.style.width = `${leftPercents}%`;
 	}
-
+  
 	customEvent = () => {
 		let slideChange = new CustomEvent('slider-change', {
 			detail: this.value,
