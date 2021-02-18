@@ -33,7 +33,6 @@ export default class StepSlider {
 
 		this.elem.addEventListener('click', this.changeSliderByClick);
 		this.elem.addEventListener('pointerdown', this.changeSliderByDrag);
-		this.elem.addEventListener('click', this.custumEvent);
 	}
 
 	getStepSpansStr() {
@@ -71,18 +70,18 @@ export default class StepSlider {
 			this.progressElement.style.width = `${coordX}%`;
 		}
 
-		let onMouseMove = (event) => {
+		let onPointerMove = (event) => {
 			let coordX = this.getCoordsXPercent(event);
 			moveAt(coordX);
 		}
 		//перемещать ползунок по экрану
-		this.elem.addEventListener('mousemove', onMouseMove);
+		document.addEventListener('pointermove', onPointerMove);
 
 		//отпустить кнопку мыши, удалить ненужные обработчики событий
-		this.thumbElement.onmouseup = () => {
-			this.elem.removeEventListener('mousemove', onMouseMove);
+		document.onpointerup = () => {
+			document.removeEventListener('pointermove', onPointerMove);
 			this.elem.classList.remove('slider_dragging');
-			this.thumbElement.onmouseup = null;
+			document.onpointerup = null;
 		};
 	}
 
@@ -120,12 +119,18 @@ export default class StepSlider {
 	}
 
 	changeSliderValue(clickRoundedCoordsXPercent) {
-		let sliderValueElement = this.elem.querySelector('.slider__value');
-		this.value = Math.round(clickRoundedCoordsXPercent / this.stepSizePercent);
+		const sliderValueElement = this.elem.querySelector('.slider__value');
+		const newValue = Math.round(clickRoundedCoordsXPercent / this.stepSizePercent);
+		if(this.value === newValue) return;
+
+		this.value = newValue;
 		sliderValueElement.innerHTML = this.value;
+
+		//Генерирую пользовательское событие
+		this.dispatchSliderChangeEvent();
 	}
 
-	custumEvent = () => {
+	dispatchSliderChangeEvent = () => {
 		let slideChange = new CustomEvent('slider-change', {
 			detail: this.value,
 			bubbles: true
