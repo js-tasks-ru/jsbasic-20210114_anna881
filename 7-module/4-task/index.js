@@ -33,6 +33,8 @@ export default class StepSlider {
 
 		this.elem.addEventListener('click', this.changeSliderByClick);
 		this.elem.addEventListener('pointerdown', this.changeSliderByDrag);
+		this.elem.addEventListener('click', this.dispatchSliderChangeEvent);
+		this.elem.addEventListener('pointerup', this.dispatchSliderChangeEvent);
 	}
 
 	getStepSpansStr() {
@@ -125,9 +127,6 @@ export default class StepSlider {
 
 		this.value = newValue;
 		sliderValueElement.innerHTML = this.value;
-
-		//Генерирую пользовательское событие
-		this.dispatchSliderChangeEvent();
 	}
 
 	dispatchSliderChangeEvent = () => {
