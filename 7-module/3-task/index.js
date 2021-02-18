@@ -27,7 +27,7 @@ export default class StepSlider {
 		slider.innerHTML = sliderThumbHTML;
 
 		this.elem.addEventListener('click', this.changeSliderValue);
-		this.elem.addEventListener('click', this.custumEvent);
+		this.elem.addEventListener('click', this.customEvent);
 	}
 
 	getStepSpansStr() {
@@ -65,7 +65,7 @@ export default class StepSlider {
 		progressElement.style.width = `${leftPercents}%`;
 	}
 
-	custumEvent = () => {
+	customEvent = () => {
 		let slideChange = new CustomEvent('slider-change', {
 			detail: this.value,
 			bubbles: true
