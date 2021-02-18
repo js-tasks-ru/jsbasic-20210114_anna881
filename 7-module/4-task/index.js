@@ -33,8 +33,6 @@ export default class StepSlider {
 
 		this.elem.addEventListener('click', this.changeSliderByClick);
 		this.elem.addEventListener('pointerdown', this.changeSliderByDrag);
-		this.elem.addEventListener('click', this.dispatchSliderChangeEvent);
-		this.elem.addEventListener('pointerup', this.dispatchSliderChangeEvent);
 	}
 
 	getStepSpansStr() {
@@ -53,6 +51,9 @@ export default class StepSlider {
 
 		//Смещение ползунка
 		this.displaceThumbElementLeft();
+
+		//Генерация пользовательского события
+		this.dispatchSliderChangeEvent();
 	}
 
 	changeSliderByDrag = () => {
@@ -81,6 +82,7 @@ export default class StepSlider {
 
 		//отпустить кнопку мыши, удалить ненужные обработчики событий
 		document.onpointerup = () => {
+			this.dispatchSliderChangeEvent();
 			document.removeEventListener('pointermove', onPointerMove);
 			this.elem.classList.remove('slider_dragging');
 			document.onpointerup = null;
