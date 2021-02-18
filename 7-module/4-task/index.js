@@ -1,7 +1,8 @@
 export default class StepSlider {
-  constructor({ steps, value = 0 }) {
+	constructor({ steps, value = 0 }) {
 		this.steps = steps;
 		this.value = value;
+		this.stepSizePercent = 100 / (this.steps - 1);
 
 		//Корневой элемент
 		let slider = document.createElement('div');
@@ -26,7 +27,12 @@ export default class StepSlider {
 
 		slider.innerHTML = sliderThumbHTML;
 
-		this.elem.addEventListener('click', this.changeSliderValue);
+		this.thumbElement = this.elem.querySelector('.slider__thumb');
+		this.thumbElement.ondragstart = () => false;
+		this.progressElement = this.elem.querySelector('.slider__progress');
+
+		this.elem.addEventListener('click', this.changeSliderByClick);
+		this.elem.addEventListener('pointerdown', this.changeSliderByDrag);
 		this.elem.addEventListener('click', this.custumEvent);
 	}
 
@@ -34,20 +40,69 @@ export default class StepSlider {
 		return '<span></span>'.repeat(this.steps - 1);
 	}
 
-	changeSliderValue = (event) => {
+	changeSliderByClick = (event) => {
 		// Определение сегмента в %
-		let offsetLeft = this.elem.offsetLeft;
-		let sliderWidthPx = this.elem.clientWidth;
-		let clickCoordsXPercent = ((event.clientX - offsetLeft) * 100) / sliderWidthPx;
-		let clickRoundedCoordsXPercent = Math.round(clickCoordsXPercent);
-		let stepSizePercent = 100 / (this.steps - 1);
+		let clickRoundedCoordsXPercent = this.getCoordsXPercent(event);
 
 		//Изменение значения сладера
-		let sliderValueElement = this.elem.querySelector('.slider__value');
-		this.value = Math.round(clickRoundedCoordsXPercent / stepSizePercent);
-		sliderValueElement.innerHTML = this.value;
+		this.changeSliderValue(clickRoundedCoordsXPercent);
 
 		//Добавление класса на выбранный элемент
+		this.setActiveStep();
+
+		//Смещение ползунка
+		this.displaceThumbElementLeft();
+	}
+
+	changeSliderByDrag = () => {
+		this.elem.classList.add('slider_dragging');
+
+		// передвинуть ползунок под координаты курсора
+		let moveAt = (coordX) => {
+
+			//Изменение значения сладера
+			this.changeSliderValue(coordX);
+
+			//Добавление класса на выбранный элемент
+			this.setActiveStep();
+
+			//Передвинуть ползунок
+			this.thumbElement.style.left = `${coordX}%`;
+			this.progressElement.style.width = `${coordX}%`;
+		}
+
+		let onMouseMove = (event) => {
+			let coordX = this.getCoordsXPercent(event);
+			moveAt(coordX);
+		}
+		//перемещать ползунок по экрану
+		this.elem.addEventListener('mousemove', onMouseMove);
+
+		//отпустить кнопку мыши, удалить ненужные обработчики событий
+		this.thumbElement.onmouseup = () => {
+			this.elem.removeEventListener('mousemove', onMouseMove);
+			this.elem.classList.remove('slider_dragging');
+			this.thumbElement.onmouseup = null;
+		};
+	}
+
+	getCoordsXPercent(event) {
+		let left = event.clientX - this.elem.offsetLeft;
+		let leftRelative = left / this.elem.offsetWidth;
+
+		if (leftRelative < 0) {
+			leftRelative = 0;
+		}
+
+		if (leftRelative > 1) {
+			leftRelative = 1;
+		}
+
+		let leftPercents = leftRelative * 100;
+		return leftPercents;
+	}
+
+	setActiveStep() {
 		const activeStepElement = this.elem.querySelector('.slider__step-active');
 		if (activeStepElement) {
 			activeStepElement.classList.remove('slider__step-active');
@@ -56,13 +111,18 @@ export default class StepSlider {
 		let spanElements = this.elem.querySelectorAll('span');
 		let spanIndex = this.value + 1;
 		spanElements[spanIndex].classList.add('slider__step-active');
+	}
 
-		//Смещение ползунка
-		let leftPercents = stepSizePercent * this.value;
-		let thumbElement = this.elem.querySelector('.slider__thumb');
-		thumbElement.style.left = `${leftPercents}%`;
-		let progressElement = this.elem.querySelector('.slider__progress');
-		progressElement.style.width = `${leftPercents}%`;
+	displaceThumbElementLeft() {
+		let leftPercents = this.stepSizePercent * this.value;
+		this.thumbElement.style.left = `${leftPercents}%`;
+		this.progressElement.style.width = `${leftPercents}%`;
+	}
+
+	changeSliderValue(clickRoundedCoordsXPercent) {
+		let sliderValueElement = this.elem.querySelector('.slider__value');
+		this.value = Math.round(clickRoundedCoordsXPercent / this.stepSizePercent);
+		sliderValueElement.innerHTML = this.value;
 	}
 
 	custumEvent = () => {
