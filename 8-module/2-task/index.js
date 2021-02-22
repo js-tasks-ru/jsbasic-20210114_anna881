@@ -10,14 +10,41 @@ export default class ProductGrid {
 		this.elem = productsGrid;
 		productsGrid.classList.add('products-grid');
 		productsGrid.innerHTML = `<div class="products-grid__inner"></div>`;
+		this.productCardsInner = this.elem.querySelector('.products-grid__inner');
 
-		products.forEach(product => {
+		this.products.forEach(product => {
 			let card = new ProductCard(product);
-			this.elem.querySelector('.products-grid__inner')
-				.append(card.elem);
+			this.productCardsInner.append(card.elem);
 		});
 
+	}
 
+	updateFilter(filters) {	
+		this.productCardsInner.innerHTML = '';
+		let currentFilteredProducts = this.products.filter(function (product) {
+			if (filters.noNuts && filters.noNuts === product.nuts) {
+				return false;
+			}
 
+			if (filters.vegeterianOnly && filters.vegeterianOnly !== product.vegeterian) {
+				return false;
+			}
+
+			if (filters.maxSpiciness && filters.maxSpiciness < product.spiciness) {
+				return false;
+			}
+
+			if (filters.category && filters.category !== product.category) {
+				return false;
+			}		
+			return true;
+		});
+
+		this.products = currentFilteredProducts;
+
+		currentFilteredProducts.forEach(product => {
+			let card = new ProductCard(product);
+			this.productCardsInner.append(card.elem);
+		});
 	}
 }
