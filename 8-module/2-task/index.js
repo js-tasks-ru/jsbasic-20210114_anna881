@@ -19,8 +19,8 @@ export default class ProductGrid {
 
 	}
 
-	updateFilter(filters) {	
-		this.productCardsInner.innerHTML = '';
+	updateFilter(appliedFilters) {
+		let filters = Object.assign(this.filters, appliedFilters);
 		let currentFilteredProducts = this.products.filter(function (product) {
 			if (filters.noNuts && filters.noNuts === product.nuts) {
 				return false;
@@ -36,12 +36,11 @@ export default class ProductGrid {
 
 			if (filters.category && filters.category !== product.category) {
 				return false;
-			}		
+			}
 			return true;
 		});
 
-		this.products = currentFilteredProducts;
-
+		this.productCardsInner.innerHTML = '';
 		currentFilteredProducts.forEach(product => {
 			let card = new ProductCard(product);
 			this.productCardsInner.append(card.elem);
