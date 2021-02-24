@@ -4,39 +4,57 @@ import escapeHtml from '../../assets/lib/escape-html.js';
 import Modal from '../../7-module/2-task/index.js';
 
 export default class Cart {
-  cartItems = []; // [product: {...}, count: N]
+	cartItems = []; // [product: {...}, count: N]
 
-  constructor(cartIcon) {
-    this.cartIcon = cartIcon;
+	constructor(cartIcon) {
+		this.cartIcon = cartIcon;
 
-    this.addEventListeners();
-  }
+		this.addEventListeners();
+	}
 
-  addProduct(product) {
-    // СКОПИРУЙТЕ СЮДЯ СВОЙ КОД
-  }
+	addProduct(product) {
+		let cartItem = this.cartItems.find(item => item.product.id == product.id)
+		if (cartItem) {
+			cartItem.count += 1;
+		} else {
+			cartItem = { product, count: 1 }
+			this.cartItems.push(cartItem);
+		}
 
-  updateProductCount(productId, amount) {
-    // СКОПИРУЙТЕ СЮДЯ СВОЙ КОД
-  }
+		this.onProductUpdate(cartItem);
+	}
 
-  isEmpty() {
-    // СКОПИРУЙТЕ СЮДЯ СВОЙ КОД
-  }
+	updateProductCount(productId, amount) {
+		const cartItemIndex = this.cartItems.findIndex(item => item.product.id == productId);
+		if (cartItemIndex === -1) {
+			return;
+		}
 
-  getTotalCount() {
-    // СКОПИРУЙТЕ СЮДЯ СВОЙ КОД
-  }
+		const cartItem = this.cartItems[cartItemIndex];
+		cartItem.count += amount;
+		if (cartItem.count === 0) {
+			this.cartItems.splice(cartItemIndex, 1);
+		}
 
-  getTotalPrice() {
-    // СКОПИРУЙТЕ СЮДЯ СВОЙ КОД
-  }
+		this.onProductUpdate(cartItem);
+	}
 
-  renderProduct(product, count) {
-    return createElement(`
-    <div class="cart-product" data-product-id="${
-      product.id
-    }">
+	isEmpty() {
+		return this.cartItems.length == 0;
+	}
+
+	getTotalCount() {
+		return this.cartItems.reduce((totalCount, cartItem) => totalCount + cartItem.count, 0);
+	}
+
+	getTotalPrice() {
+		return this.cartItems.reduce((totalSum, cartItem) => totalSum + cartItem.count * cartItem.product.price, 0);
+	}
+
+	renderProduct(product, count) {
+		return createElement(`
+    <div class="cart-product" data-product-id="${product.id
+			}">
       <div class="cart-product__img">
         <img src="/assets/images/products/${product.image}" alt="product">
       </div>
@@ -56,10 +74,10 @@ export default class Cart {
         </div>
       </div>
     </div>`);
-  }
+	}
 
-  renderOrderForm() {
-    return createElement(`<form class="cart-form">
+	renderOrderForm() {
+		return createElement(`<form class="cart-form">
       <h5 class="cart-form__title">Delivery</h5>
       <div class="cart-form__group cart-form__group_row">
         <input name="name" type="text" class="cart-form__input" placeholder="Name" required value="Santa Claus">
@@ -74,31 +92,31 @@ export default class Cart {
           <div class="cart-buttons__info">
             <span class="cart-buttons__info-text">total</span>
             <span class="cart-buttons__info-price">€${this.getTotalPrice().toFixed(
-              2
-            )}</span>
+			2
+		)}</span>
           </div>
           <button type="submit" class="cart-buttons__button btn-group__button button">order</button>
         </div>
       </div>
     </form>`);
-  }
+	}
 
-  renderModal() {
-    // ...ваш код
-  }
+	renderModal() {
+		// ...ваш код
+	}
 
-  onProductUpdate(cartItem) {
-    // ...ваш код
+	onProductUpdate(cartItem) {
+		// ...ваш код
 
-    this.cartIcon.update(this);
-  }
+		this.cartIcon.update(this);
+	}
 
-  onSubmit(event) {
-    // ...ваш код
-  };
+	onSubmit(event) {
+		// ...ваш код
+	};
 
-  addEventListeners() {
-    this.cartIcon.elem.onclick = () => this.renderModal();
-  }
+	addEventListeners() {
+		this.cartIcon.elem.onclick = () => this.renderModal();
+	}
 }
 
