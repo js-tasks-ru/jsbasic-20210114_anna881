@@ -102,7 +102,32 @@ export default class Cart {
 	}
 
 	renderModal() {
-		// ...ваш код
+		let basketModal = new Modal();
+		basketModal.setTitle('Your order');
+
+		let divInModal = document.createElement('div');
+		addProductFieldToDiv(this.cartItems, this.renderProduct);
+		divInModal.appendChild(this.renderOrderForm());
+
+		basketModal.setBody(divInModal);
+		basketModal.open();
+
+		function addProductFieldToDiv(cartItems, renderProductFunction) {
+			cartItems.forEach(cartItem => divInModal.appendChild(renderProductFunction(cartItem.product, cartItem.count)));
+		}
+
+		//Обработчики на -/+
+		let buttons = document.body.querySelectorAll('.cart-counter__button');
+		buttons.forEach(button => {
+			button.addEventListener('click', (event) => {
+				let amount = (event.target.alt == 'plus') ? 1 : -1;
+				let productId = event.target.closest('.cart-product').getAttribute('data-product-id');
+
+				this.updateProductCount(productId, amount);
+				console.log(this.cartItems);
+			})
+
+		})
 	}
 
 	onProductUpdate(cartItem) {
