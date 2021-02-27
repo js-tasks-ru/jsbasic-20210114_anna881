@@ -131,7 +131,7 @@ export default class Cart {
 
 		//Обработчик на форму отправки заказа
 		let orderForm = document.body.querySelector('.cart-form');
-		orderForm.addEventListener('submit', this.onSubmit);
+		orderForm.addEventListener('submit', (event) => { this.onSubmit(event); });
 	}
 
 	onProductUpdate(cartItem) {
@@ -173,12 +173,12 @@ export default class Cart {
 									</p>
 								</div>`;
 
-			this.cartItems.splice(0, this.cartItems.length-1);
+			this.cartItems.splice(0, this.cartItems.length);
 		} else {
 			alert("Ошибка HTTP: " + response.status);
 		}
 	};
-	
+
 	addEventListeners() {
 		this.cartIcon.elem.onclick = () => this.renderModal();
 	}
