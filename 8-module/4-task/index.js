@@ -70,7 +70,7 @@ export default class Cart {
               <img src="/assets/images/icons/square-plus-icon.svg" alt="plus">
             </button>
           </div>
-          <div class="cart-product__price">€${product.price.toFixed(2)}</div>
+          <div class="cart-product__price">€${(product.price * count).toFixed(2)}</div>
         </div>
       </div>
     </div>`);
@@ -103,12 +103,14 @@ export default class Cart {
 
 	renderModal() {
 		let basketModal = new Modal();
-		basketModal.setTitle('Your order');
 
+		//Формирование модального окна
 		let divInModal = document.createElement('div');
+		this.elem = divInModal;
 		addProductFieldToDiv(this.cartItems, this.renderProduct);
 		divInModal.appendChild(this.renderOrderForm());
 
+		basketModal.setTitle('Your order');
 		basketModal.setBody(divInModal);
 		basketModal.open();
 
@@ -124,22 +126,59 @@ export default class Cart {
 				let productId = event.target.closest('.cart-product').getAttribute('data-product-id');
 
 				this.updateProductCount(productId, amount);
-				console.log(this.cartItems);
 			})
-
 		})
+
+		//Обработчик на форму отправки заказа
+		let orderForm = document.body.querySelector('.cart-form');
+		orderForm.addEventListener('submit', this.onSubmit);
 	}
 
 	onProductUpdate(cartItem) {
-		// ...ваш код
-
 		this.cartIcon.update(this);
+
+		if (!document.body.classList.contains('is-modal-open')) { return; }
+
+		if (this.getTotalCount() > 0) {
+			this.renderModal();
+		} else {
+			let modal = document.querySelector('.modal');
+			modal.remove();
+			document.body.classList.remove('is-modal-open');
+		}
 	}
 
-	onSubmit(event) {
-		// ...ваш код
-	};
+	async onSubmit(event) {
+		event.preventDefault();
 
+		let submitButton = document.querySelector('[type="submit"]');
+		let orderForm = document.body.querySelector('.cart-form');
+		submitButton.classList.add('is-loading');
+
+		let response = await fetch('https://httpbin.org/post', {
+			method: 'POST',
+			body: new FormData(orderForm)
+		});
+
+		if (response.ok) {
+			let modalTitle = document.querySelector('.modal__title');
+			let modalBody = document.querySelector('.modal__body');
+
+			modalTitle.innerHTML = 'Success!';
+			modalBody.innerHTML = `<div class="modal__body-inner">
+									<p>
+										Order successful! Your order is being cooked :) <br>
+										We’ll notify you about delivery time shortly.<br>
+										<img src="/assets/images/delivery.gif">
+									</p>
+								</div>`;
+
+			this.cartItems.splice(0, this.cartItems.length-1);
+		} else {
+			alert("Ошибка HTTP: " + response.status);
+		}
+	};
+	
 	addEventListeners() {
 		this.cartIcon.elem.onclick = () => this.renderModal();
 	}
