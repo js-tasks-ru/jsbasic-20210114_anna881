@@ -122,6 +122,8 @@ export default class Cart {
 		let buttons = document.body.querySelectorAll('.cart-counter__button');
 		buttons.forEach(button => {
 			button.addEventListener('click', (event) => {
+				// TODO: работа кнопки не должна звисеть от контента (в данном случае от атрибута alt картинки)
+				// можно добавить атрибут increseOn со значениями '-1' и '1' на кнопки
 				let amount = (event.target.alt == 'plus') ? 1 : -1;
 				let productId = event.target.closest('.cart-product').getAttribute('data-product-id');
 
