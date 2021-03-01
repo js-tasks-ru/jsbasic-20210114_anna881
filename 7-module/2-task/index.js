@@ -3,9 +3,8 @@ import createElement from '../../assets/lib/create-element.js';
 export default class Modal {
 	constructor() {
 		this.modal = document.createElement('div');
-		this.modal.classList.add('Modal');
-		this.modalHtml = `
-			<div class="modal">
+		this.modal.classList.add('modal');
+		this.modalHtml = `			
 				<div class="modal__overlay"></div>
 				<div class="modal__inner">
 					<div class="modal__header">	
@@ -15,9 +14,9 @@ export default class Modal {
 						<h3 class="modal__title">${this.title}</h3>
 					</div>
 					<div class="modal__body">${this.body}</div>
-				</div>
-			</div>`;
+				</div>`;
 		this.modal.innerHTML = this.modalHtml;
+		this.elem = this.modal;
 	}
 
 	open() {		
