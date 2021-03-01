@@ -7,6 +7,7 @@ export default class RibbonMenu {
 		// Корневой элемент DIV
 		let ribbon = document.createElement('div');
 		ribbon.classList.add('ribbon');
+		this.elem = ribbon;
 
 		// Кнопки прокрутки меню
 		const leftButtonHtml = `<button class="ribbon__arrow ribbon__arrow_left">
@@ -18,22 +19,22 @@ export default class RibbonMenu {
 		ribbon.innerHTML = leftButtonHtml + rigthButtonHtml;
 
 		// Элемент NAV, c категориями меню
-		let ribbonInner = document.createElement('nav');
-		ribbonInner.innerHTML = this.getRibbonInnerHtml(categories);
-		ribbonInner.classList.add('ribbon__inner');
-		ribbon.appendChild(ribbonInner);
+		this.ribbonInner = document.createElement('nav');
+		this.ribbonInner.innerHTML = this.getRibbonInnerHtml(categories);
+		this.ribbonInner.classList.add('ribbon__inner');
+		ribbon.appendChild(this.ribbonInner);
 
 		// Обработчики событий на прокрутку меню
-		let rigthButton = ribbon.querySelector('.ribbon__arrow_right');
-		rigthButton.addEventListener('click', moveRight);
+		this.rigthButton = ribbon.querySelector('.ribbon__arrow_right');
+		this.rigthButton.addEventListener('click', () => this.moveRight());
 
-		let leftButton = ribbon.querySelector('.ribbon__arrow_left');
-		leftButton.addEventListener('click', moveLeft);
+		this.leftButton = ribbon.querySelector('.ribbon__arrow_left');
+		this.leftButton.addEventListener('click', () => this.moveLeft());
 
 		// Обработчики на ribbonInner
-		ribbonInner.addEventListener('scroll', checkPocition);
-		ribbonInner.addEventListener('click', selectItem);
-		ribbonInner.addEventListener('click', function (event) {
+		this.ribbonInner.addEventListener('scroll', () => this.checkPocition());
+		this.ribbonInner.addEventListener('click', this.selectItem);
+		this.ribbonInner.addEventListener('click', (event) => {
 			let currentItem = event.target;
 			let ribbonSelect = new CustomEvent('ribbon-select', {
 				detail: currentItem.dataset.id,
@@ -42,51 +43,7 @@ export default class RibbonMenu {
 			currentItem.dispatchEvent(ribbonSelect);
 		});		
 
-		const MOVE_OFFSET = 350;
-
-		// Функции
-		function moveRight() {
-			ribbonInner.scrollBy(MOVE_OFFSET, 0);
-		}
-
-		function moveLeft() {
-			ribbonInner.scrollBy(-MOVE_OFFSET, 0);
-		}
-
-		function checkPocition() {
-			let scrollLeft = ribbonInner.scrollLeft;
-			let scrollWidth = ribbonInner.scrollWidth;
-			let clientWidth = ribbonInner.clientWidth;
-			let scrollRight = scrollWidth - scrollLeft - clientWidth;
-
-			function setButtonVisibleByScrollValue(button, scrollValue) {			
-				const DELTA = 1.0;
-				const VISIBLE_CLASSNAME = 'ribbon__arrow_visible';
-				return scrollValue < DELTA 
-					? button.classList.remove(VISIBLE_CLASSNAME) 
-					: button.classList.add(VISIBLE_CLASSNAME);
-			}
-
-			setButtonVisibleByScrollValue(leftButton, scrollLeft);
-			setButtonVisibleByScrollValue(rigthButton, scrollRight);
-		}
-
-		function selectItem(event) {
-			event.preventDefault();
-
-			let target = event.target;	// где был клик
-			if (target.className != 'ribbon__item') return; // не на класс тогда не интересует
-
-			// убрать подсветку у эдементов
-			let previousHighlightedItem = ribbonInner.querySelector('.ribbon__item_active');
-			if(previousHighlightedItem) {
-				previousHighlightedItem.classList.remove('ribbon__item_active');
-			}
-
-			target.classList.add('ribbon__item_active'); // подсветить новый item
-		}		
-		
-		this.elem = ribbon;
+		this.moveOffset = 350;
 	}
 
 	getRibbonInnerHtml(categories) {
@@ -97,4 +54,45 @@ export default class RibbonMenu {
 
 		return htmlStr;
 	}
+
+	moveRight() {
+		this.ribbonInner.scrollBy(this.moveOffset, 0);
+	}
+
+	moveLeft() {
+		this.ribbonInner.scrollBy(-this.moveOffset, 0);
+	}
+
+	checkPocition() {
+		let scrollLeft = this.ribbonInner.scrollLeft;
+		let scrollWidth = this.ribbonInner.scrollWidth;
+		let clientWidth = this.ribbonInner.clientWidth;
+		let scrollRight = scrollWidth - scrollLeft - clientWidth;
+
+		function setButtonVisibleByScrollValue(button, scrollValue) {			
+			const DELTA = 1.0;
+			const VISIBLE_CLASSNAME = 'ribbon__arrow_visible';
+			return scrollValue < DELTA 
+				? button.classList.remove(VISIBLE_CLASSNAME) 
+				: button.classList.add(VISIBLE_CLASSNAME);
+		}
+
+		setButtonVisibleByScrollValue(this.leftButton, scrollLeft);
+		setButtonVisibleByScrollValue(this.rigthButton, scrollRight);
+	}
+
+	selectItem(event) {
+		event.preventDefault();
+
+		let target = event.target;	// где был клик
+		if (target.className != 'ribbon__item') return; // не на класс тогда не интересует
+
+		// убрать подсветку у эдементов
+		let previousHighlightedItem = this.querySelector('.ribbon__item_active');
+		if(previousHighlightedItem) {
+			previousHighlightedItem.classList.remove('ribbon__item_active');
+		}
+
+		target.classList.add('ribbon__item_active'); // подсветить новый item
+	}		
 }

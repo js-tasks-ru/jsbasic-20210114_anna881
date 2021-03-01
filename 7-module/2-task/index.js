@@ -2,45 +2,37 @@ import createElement from '../../assets/lib/create-element.js';
 
 export default class Modal {
 	constructor() {
-	}
-
-	open() {
-		const self = this;
-
-		const modalWindowHtml = `
-			<div class="modal">
+		this.modal = document.createElement('div');
+		this.modal.classList.add('modal');
+		this.modalHtml = `			
 				<div class="modal__overlay"></div>
 				<div class="modal__inner">
 					<div class="modal__header">	
 						<button type="button" class="modal__close">
 						<img src="/assets/images/icons/cross-icon.svg" alt="close-icon" />
 						</button>
-
-						<h3 class="modal__title">
-							${self.title}
-						</h3>
+						<h3 class="modal__title">${this.title}</h3>
 					</div>
-					<div class="modal__body">
-						${self.body}
-					</div>
-				</div>
-			</div>`;
-
-		document.body.innerHTML = modalWindowHtml;
-		document.body.classList.add('is-modal-open');
-		self.modal = document.body.querySelector('.modal');
-
-		const closeButton = document.body.querySelector('.modal__close');
-		closeButton.addEventListener('click', () => self.close());
-
-		document.body.addEventListener('keydown', self.closeByEscape);
+					<div class="modal__body">${this.body}</div>
+				</div>`;
+		this.modal.innerHTML = this.modalHtml;
+		this.elem = this.modal;
 	}
 
-	closeByEscape = (event) => {
+	open() {		
+		document.body.append(this.modal);
+		document.body.classList.add('is-modal-open');
+		
+		const closeButton = document.body.querySelector('.modal__close');
+		closeButton.addEventListener('click', () => this.close());
+
+		document.body.addEventListener('keydown', (event) => this.closeByEscape(event));
+	}
+
+	closeByEscape(event) {
 		if (event.code === 'Escape') {
 			this.close();
-		}
-		
+		}		
 		document.body.removeEventListener('keydown', this.closeByEscape);
 	}
 
