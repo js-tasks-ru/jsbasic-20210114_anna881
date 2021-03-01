@@ -70,7 +70,7 @@ export default class Cart {
               <img src="/assets/images/icons/square-plus-icon.svg" alt="plus">
             </button>
           </div>
-          <div class="cart-product__price">€${(product.price * count).toFixed(2)}</div>
+          <div class="cart-product__price">€${product.price}</div>
         </div>
       </div>
     </div>`);
@@ -118,15 +118,21 @@ export default class Cart {
 			cartItems.forEach(cartItem => divInModal.appendChild(renderProductFunction(cartItem.product, cartItem.count)));
 		}
 
-		//Обработчики на -/+
-		let buttons = document.body.querySelectorAll('.cart-counter__button');
-		buttons.forEach(button => {
+		//Обработчики на -
+		let buttonsMinus = document.body.querySelectorAll('.cart-counter__button_minus');
+		buttonsMinus.forEach(button => {
 			button.addEventListener('click', (event) => {
-				// TODO: работа кнопки не должна звисеть от контента (в данном случае от атрибута alt картинки)
-				// можно добавить атрибут increseOn со значениями '-1' и '1' на кнопки
-				let amount = (event.target.alt == 'plus') ? 1 : -1;
+				let amount = -1;
 				let productId = event.target.closest('.cart-product').getAttribute('data-product-id');
-
+				this.updateProductCount(productId, amount);
+			})
+		})
+		//Обработчики на +
+		let buttonsPlus = document.body.querySelectorAll('.cart-counter__button_plus');
+		buttonsPlus.forEach(button => {
+			button.addEventListener('click', (event) => {				
+				let amount = 1;
+				let productId = event.target.closest('.cart-product').getAttribute('data-product-id');
 				this.updateProductCount(productId, amount);
 			})
 		})
