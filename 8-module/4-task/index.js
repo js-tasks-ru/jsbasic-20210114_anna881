@@ -70,7 +70,7 @@ export default class Cart {
               <img src="/assets/images/icons/square-plus-icon.svg" alt="plus">
             </button>
           </div>
-          <div class="cart-product__price">€${product.price.toFixed(2)}</div>
+          <div class="cart-product__price">€${(product.price * count).toFixed(2)}</div>
         </div>
       </div>
     </div>`);
@@ -104,7 +104,6 @@ export default class Cart {
 
 		//Формирование модального окна
 		let divInModal = document.createElement('div');
-		this.elem = divInModal;
 		addProductFieldToDiv(this.cartItems, this.renderProduct);
 		divInModal.appendChild(this.renderOrderForm());
 
@@ -146,18 +145,11 @@ export default class Cart {
 		if (!document.body.classList.contains('is-modal-open')) { return; }
 
 		if (this.getTotalCount() > 0) {
-			console.log("Обновить модальное окно");
-
-			let productId = cartItem.product.id; // Уникальный идентификатора товара (для примера)
-			let modalBody = document.body.querySelector('.modal');//корневой элемент тела модального окна, который мы получили, вызвав метод renderModal
+			let productId = cartItem.product.id;
+			let modalBody = document.body.querySelector('.modal');
 			
-			// Элемент, который хранит количество товаров с таким productId в корзине
 			let productCount = modalBody.querySelector(`[data-product-id="${productId}"] .cart-counter__count`);
-			
-			// Элемент с общей стоимостью всех единиц этого товара
 			let productPrice = modalBody.querySelector(`[data-product-id="${productId}"] .cart-product__price`);
-			
-			// Элемент с суммарной стоимостью всех товаров
 			let infoPrice = modalBody.querySelector(`.cart-buttons__info-price`);
 			
 			productCount.innerHTML = cartItem.count;	
@@ -198,6 +190,8 @@ export default class Cart {
 								</div>`;
 
 			this.cartItems.splice(0, this.cartItems.length);
+			this.cartIcon.update(this);
+
 		} else {
 			alert("Ошибка HTTP: " + response.status);
 		}
