@@ -70,7 +70,7 @@ export default class Cart {
               <img src="/assets/images/icons/square-plus-icon.svg" alt="plus">
             </button>
           </div>
-          <div class="cart-product__price">€${product.price}</div>
+          <div class="cart-product__price">€${product.price.toFixed(2)}</div>
         </div>
       </div>
     </div>`);
@@ -91,9 +91,7 @@ export default class Cart {
         <div class="cart-buttons__buttons btn-group">
           <div class="cart-buttons__info">
             <span class="cart-buttons__info-text">total</span>
-            <span class="cart-buttons__info-price">€${this.getTotalPrice().toFixed(
-			2
-		)}</span>
+            <span class="cart-buttons__info-price">€${this.getTotalPrice().toFixed(2)}</span>
           </div>
           <button type="submit" class="cart-buttons__button btn-group__button button">order</button>
         </div>
@@ -148,7 +146,25 @@ export default class Cart {
 		if (!document.body.classList.contains('is-modal-open')) { return; }
 
 		if (this.getTotalCount() > 0) {
-			this.renderModal();
+			console.log("Обновить модальное окно");
+
+			let productId = cartItem.product.id; // Уникальный идентификатора товара (для примера)
+			let modalBody = document.body.querySelector('.modal');//корневой элемент тела модального окна, который мы получили, вызвав метод renderModal
+			
+			// Элемент, который хранит количество товаров с таким productId в корзине
+			let productCount = modalBody.querySelector(`[data-product-id="${productId}"] .cart-counter__count`);
+			
+			// Элемент с общей стоимостью всех единиц этого товара
+			let productPrice = modalBody.querySelector(`[data-product-id="${productId}"] .cart-product__price`);
+			
+			// Элемент с суммарной стоимостью всех товаров
+			let infoPrice = modalBody.querySelector(`.cart-buttons__info-price`);
+			
+			productCount.innerHTML = cartItem.count;	
+			productPrice.innerHTML = `€${(cartItem.count * cartItem.product.price).toFixed(2)}`;
+			infoPrice.innerHTML = `€${this.getTotalPrice().toFixed(2)}`;
+
+
 		} else {
 			let modal = document.querySelector('.modal');
 			modal.remove();
