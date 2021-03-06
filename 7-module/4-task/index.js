@@ -90,7 +90,7 @@ export default class StepSlider {
 	}
 
 	getCoordsXPercent(event) {
-		let left = event.clientX - this.elem.offsetLeft;
+		let left = event.clientX - this.elem.getBoundingClientRect().left;
 		let leftRelative = left / this.elem.offsetWidth;
 
 		if (leftRelative < 0) {
