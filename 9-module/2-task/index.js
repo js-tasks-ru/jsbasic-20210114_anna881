@@ -11,7 +11,6 @@ import CartIcon from '../../8-module/1-task/index.js';
 import Cart from '../../8-module/4-task/index.js';
 
 export default class Main {
-
 	constructor() {
 	}
 
@@ -33,11 +32,10 @@ export default class Main {
 
 		let cart = new Cart(cartIcon);
 
-
 		//Получение списка товаров c сервера 		
 		let response = await fetch('products.json');
 		let products = await response.json();
-
+		
 		let productsGrid = new ProductsGrid(products);
 		productsGrid.updateFilter({
 			noNuts: document.getElementById('nuts-checkbox').checked,
@@ -45,12 +43,13 @@ export default class Main {
 			maxSpiciness: stepSlider.value,
 			category: ribbonMenu.value
 		});
+
 		document.querySelector('[data-products-grid-holder]').innerHTML = '';
 		document.querySelector('[data-products-grid-holder]').appendChild(productsGrid.elem);
 
 		//Пользовательские события
 		document.body.addEventListener('product-add', (event) => {
-			let product = products.find(item => item.id === event.detail);
+			let product = event.detail;
 			cart.addProduct(product);
 		});
 
