@@ -23,7 +23,8 @@ export default class Main {
 		document.querySelector('[data-ribbon-holder]').appendChild(ribbonMenu.elem);
 
 		let stepSlider = new StepSlider({
-			steps: 5
+			steps: 5,
+			value: 3
 		});
 		document.querySelector('[data-slider-holder]').appendChild(stepSlider.elem);
 
@@ -38,15 +39,14 @@ export default class Main {
 		let products = await response.json();
 
 		let productsGrid = new ProductsGrid(products);
-		document.querySelector('[data-products-grid-holder]').innerHTML = '';
-		document.querySelector('[data-products-grid-holder]').appendChild(productsGrid.elem);
-
 		productsGrid.updateFilter({
 			noNuts: document.getElementById('nuts-checkbox').checked,
 			vegeterianOnly: document.getElementById('vegeterian-checkbox').checked,
 			maxSpiciness: stepSlider.value,
 			category: ribbonMenu.value
 		});
+		document.querySelector('[data-products-grid-holder]').innerHTML = '';
+		document.querySelector('[data-products-grid-holder]').appendChild(productsGrid.elem);
 
 		//Пользовательские события
 		document.body.addEventListener('product-add', (event) => {
