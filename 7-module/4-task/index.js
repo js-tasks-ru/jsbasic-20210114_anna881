@@ -1,5 +1,5 @@
 export default class StepSlider {
-	constructor({ steps, value = 0 }) {
+	constructor({ steps, value}) {
 		this.steps = steps;
 		this.value = value;
 		this.stepSizePercent = 100 / (this.steps - 1);
@@ -12,7 +12,7 @@ export default class StepSlider {
 		let sliderThumbHTML = `
 			<!--Ползунок слайдера с активным значением-->
 			<div class="slider__thumb">
-				<span class="slider__value">0</span>
+				<span class="slider__value">${this.value}</span>
 			</div>
 			
 			<!--Полоска слайдера-->
@@ -20,9 +20,8 @@ export default class StepSlider {
 			
 			<!-- Шаги слайдера (вертикальные чёрточки) -->
 			<div class="slider__steps">
-				<!-- текущий выбранный шаг выделен этим классом -->
-				<span class="slider__step-active"></span>
-				${this.getStepSpansStr()}
+				<!-- текущий выбранный шаг выделен этим классом -->				
+				${this.getStepSpansStr()}				
 			</div>`;
 
 		slider.innerHTML = sliderThumbHTML;
@@ -31,12 +30,15 @@ export default class StepSlider {
 		this.thumbElement.ondragstart = () => false;
 		this.progressElement = this.elem.querySelector('.slider__progress');
 
+		this.setActiveStep();
+		this.displaceThumbElementLeft();
+
 		this.elem.addEventListener('click', this.changeSliderByClick);
 		this.elem.addEventListener('pointerdown', this.changeSliderByDrag);
 	}
 
 	getStepSpansStr() {
-		return '<span></span>'.repeat(this.steps - 1);
+		return '<span></span>'.repeat(this.steps);
 	}
 
 	changeSliderByClick = (event) => {
@@ -90,7 +92,7 @@ export default class StepSlider {
 	}
 
 	getCoordsXPercent(event) {
-		let left = event.clientX - this.elem.offsetLeft;
+		let left = event.clientX - this.elem.getBoundingClientRect().left;
 		let leftRelative = left / this.elem.offsetWidth;
 
 		if (leftRelative < 0) {
